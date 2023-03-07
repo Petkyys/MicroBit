@@ -1,15 +1,24 @@
 MousePosition = [0,0]
-CatPosition = [2,2]
+CatPosition = [0,0]
 GameFinished =  False
 KeyBindsAllowed= False
 TimePlayed = 0
 MouseMoves = 0
 CatMoves = 0
 
-Difficulty  = 1   #  Eazy(1) / Medium(2) / Hard(3)
-TimeLimit   = 0   #  Time limit (s)  : 0 = No limit
-MovesLimit  = 0   #  Cat moves limit : 0 = No limit
-MotionDeg   = 40  #  Degrees to register movement
+# CAT AND MOUSE GAME
+#  Cat can be moved in 4 directions by tilting the board
+#   - When moving the cat tilt the board and return to horizontal state
+#   - Cat can be moved only after the mouse has moved!
+#  Mouse moves after the cat in 8 directions
+#  Button A: show cat moves (after finishing the game)
+#  Button B: restart game (after finishing the game)
+#  Game features (Difficulty, TimeLimit, MovesLimit, MotionDeg) can be adjusted
+
+Difficulty  = 3   #  Eazy(1) / Medium(2) / Hard(3)
+TimeLimit   = 0   #  Time limit (s)  │ 0 = No limit
+MovesLimit  = 0   #  Cat moves limit │ 0 = No limit
+MotionDeg   = 35  #  Degrees to register movement
 
 #Mouse Updater modules:
 def SetRandomMousePosition():
@@ -29,6 +38,7 @@ def MouseUpdatePosition(PositionX,PositionY):
    led.plot_brightness(PositionX,PositionY,40)
    MousePosition[0] = PositionX
    MousePosition[1] = PositionY
+   basic.pause(50)
    MouseMoves += 1
 
 def IsCornerBlock(PositionX, PositionY):
@@ -40,18 +50,18 @@ def IsCornerBlock(PositionX, PositionY):
        return True
    elif PositionX == 4 and PositionY == 4:
        return True
-   else: 
+   else:
        return False
 
 def MoveMouse():
     global MousePosition, MouseUpdatePosition, CatPosition, Difficulty
     PossibleYvalue = [-1,1]
     FurthestBlock = [0,0]
-    BlockDistance = 0 
+    BlockDistance = 0
     CornerBlock = False
     Test = True
     for i in range(Math.pow(Difficulty, 3)*2):
-     basic.pause(10)
+     basic.pause(5)
      NewMousePosition = [0,0]
      if MousePosition[0] < 4 and MousePosition[0] > 0:
         NewMousePosition[0] = MousePosition[0] + randint(-1, 1)
@@ -81,16 +91,16 @@ def MoveMouse():
                FurthestBlock[1] = NewMousePosition[1]
                print("Corner block allowed")
                BlockDistance = abs(NewMousePosition[0] - CatPosition[0]) + abs(NewMousePosition[1] - CatPosition[1])
-               CornerBlock = IsCornerBlock(NewMousePosition[0], NewMousePosition[1])
+               CornerBlock = True
        else:
          FurthestBlock[0] = NewMousePosition[0]
          FurthestBlock[1] = NewMousePosition[1]
          print("NewFurthestBlock: "+ NewMousePosition[0]+","+ NewMousePosition[1])
          BlockDistance = abs(NewMousePosition[0] - CatPosition[0]) + abs(NewMousePosition[1] - CatPosition[1])
          CornerBlock = IsCornerBlock(NewMousePosition[0], NewMousePosition[1])
-         print("Distance: " + BlockDistance)       
+         print("Distance: " + BlockDistance)
 
-     elif abs(NewMousePosition[0] - CatPosition[0]) + abs(NewMousePosition[1] - CatPosition[1]) == BlockDistance and CornerBlock == True:
+     elif abs(NewMousePosition[0] - CatPosition[0]) + abs(NewMousePosition[1] - CatPosition[1]) == BlockDistance and CornerBlock :
         if IsCornerBlock(NewMousePosition[0], NewMousePosition[1]) == False:
          FurthestBlock[0] = NewMousePosition[0]
          FurthestBlock[1] = NewMousePosition[1]
@@ -111,7 +121,7 @@ def CatUpdatePosition(PositionX, PositionY):
   CatPosition[0] = PositionX
   CatPosition[1] = PositionY
   CatMoves += 1
-  basic.pause(900)
+  basic.pause(800)
   if GameStatus() == "Continue":
      MoveMouse()
 
@@ -141,8 +151,7 @@ def GameStatusWinner():
 def GameStatusLoser():
     global GameFinished,CatPosition, MousePosition, CatMoves, KeyBindsAllowed
     GameFinished = True
-    led.unplot(CatPosition[0],CatPosition[1])
-    led.unplot(MousePosition[0],MousePosition[1])
+    basic.clear_screen()
     basic.pause(100)
     basic.show_string("GAME OVER",130)
     basic.show_number(CatMoves)
@@ -206,3 +215,5 @@ basic.forever(BaseRotation)
 StartTimer()
 input.on_button_pressed(Button.A, ShowScore)
 input.on_button_pressed(Button.B, RestartGame)
+
+# Made by Daniel Peterka 3A6
