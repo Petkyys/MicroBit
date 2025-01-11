@@ -1,0 +1,48 @@
+button_a_pressed = False
+button_b_pressed = False
+
+radio.set_group(1)
+
+'''
+Radio Signals:
+  0  - Straight
+  1  - Left
+  2  - Right
+  10 - Stop
+  11 - Forward
+  12 - Backward
+'''
+
+def on_forever():
+    if input.button_is_pressed(Button.AB):
+        radio.send_number(10)
+    else:
+        # Button A is pressed
+        if button_a_pressed == False and input.button_is_pressed(Button.A):
+            radio.send_number(1)
+            button_a_pressed = True
+
+        # Button A is released
+        if button_a_pressed and not input.button_is_pressed(Button.A):
+            radio.send_number(0)
+            button_a_pressed = False
+
+        # Button B is pressed
+        if button_b_pressed == False and input.button_is_pressed(Button.B):
+            radio.send_number(2)
+            button_b_pressed = True
+
+        # Button B is released
+        if button_b_pressed and not input.button_is_pressed(Button.B):
+            radio.send_number(0)
+            button_b_pressed = False
+
+    # Forwards
+    if input.rotation(Rotation.PITCH) > 60:
+        radio.send_number(11)
+    
+    # Backwards
+    if input.rotation(Rotation.PITCH) > -60:
+        radio.send_number(12)
+
+basic.forever(on_forever)
