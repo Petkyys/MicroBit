@@ -35,22 +35,22 @@ def on_forever():
 
     elif not button_ab_pressed:
         # Button A is pressed
-        if button_a_pressed == False and input.button_is_pressed(Button.A) and button_b_pressed == False:
+        if not button_a_pressed and input.button_is_pressed(Button.A) and not button_b_pressed:
             radio.send_number(2)
             button_a_pressed = True
 
         # Button A is released
-        if button_a_pressed and not input.button_is_pressed(Button.A) and button_b_pressed == False:
+        if button_a_pressed and not input.button_is_pressed(Button.A) and not button_b_pressed:
             radio.send_number(0)
             button_a_pressed = False
 
         # Button B is pressed
-        if button_b_pressed == False and input.button_is_pressed(Button.B) and button_a_pressed == False:
+        if not button_b_pressed and input.button_is_pressed(Button.B) and not button_a_pressed:
             radio.send_number(3)
             button_b_pressed = True
 
         # Button B is released
-        if button_b_pressed and not input.button_is_pressed(Button.B) and button_a_pressed == False:
+        if button_b_pressed and not input.button_is_pressed(Button.B) and not button_a_pressed:
             radio.send_number(0)
             button_b_pressed = False
 
