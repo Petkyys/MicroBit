@@ -11,7 +11,9 @@ Radio Signals:
   1   - Forwards
   2   - Left
   3   - Right
-  10  - Parking Brake ON
+  10  - Parking brake on
+
+  Made by: Daniel Peterka 5A6
 '''
 
 basic.show_leds("""
