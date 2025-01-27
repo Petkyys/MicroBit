@@ -19,7 +19,12 @@ Radio Signals:
   2   - Left
   3   - Right
   10  - Parking Brake ON
+
+
+Made by: Daniel Peterka 5A6
 '''
+
+
 
 def on_forever():
     global button_a_pressed, button_b_pressed, button_ab_pressed
@@ -55,7 +60,7 @@ def on_forever():
             button_b_pressed = False
 
     # Forwards
-    if input.rotation(Rotation.PITCH) > 60:
+    if input.rotation(Rotation.PITCH) > 65:
         radio.send_number(1)
     
     # Backwards
@@ -65,3 +70,4 @@ def on_forever():
     basic.pause(150)
 
 basic.forever(on_forever)
+
