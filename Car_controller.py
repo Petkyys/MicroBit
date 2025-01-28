@@ -61,11 +61,11 @@ def on_forever():
 
     # Forwards
     if input.rotation(Rotation.PITCH) > 65:
-        radio.send_number(1)
+        radio.send_number(-1)
     
     # Backwards
     if input.rotation(Rotation.PITCH) < -60:
-        radio.send_number(-1)
+        radio.send_number(1)
     
     basic.pause(150)
 
