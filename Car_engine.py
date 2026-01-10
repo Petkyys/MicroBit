@@ -6,12 +6,14 @@ radio.set_group(1)
 
 '''
 Radio Signals:
-  -1  - Backwards
+  1  - Backwards
   0   - Straight
-  1   - Forwards
+  -1   - Forwards
   2   - Left
   3   - Right
   10  - Parking brake on
+
+PINY: 1VG A 2VG - pokud se to špatně točí, tak jsou špatně piny (pozor na otočení!)
 
   Made by: Daniel Peterka 5A6
 '''
@@ -30,21 +32,21 @@ def control_vehicle():
     global direction, steering
 
     # Movement control
-    if direction == 1:            # Forwards
+    if direction == -1:            # Forwards
         if steering == 2:         # Turn left
-            RingbitCar.turnleft()
+            RingbitCar.freestyle(100, 40)
         elif steering == 3:       # Turn right
-            RingbitCar.turnright()
+            RingbitCar.freestyle(40, 100)
         else:
-            RingbitCar.forward()  # Forwards
+            RingbitCar.freestyle(100, 100)  # Forwards
 
-    elif direction == -1:         # Backwards
+    elif direction == 1:         # Backwards
         if steering == 2:         # Turn left
-            RingbitCar.turnleft()
+            RingbitCar.freestyle(-100, -40)
         elif steering == 3:       # Turn right
-            RingbitCar.turnright()
+            RingbitCar.freestyle(-40, -100)
         else:
-            RingbitCar.back()     # Backwards
+            RingbitCar.freestyle(-100, -100)     # Backwards
 
     elif direction == 10:
         RingbitCar.brake()        # Stop
