@@ -9,13 +9,13 @@ Movement:
   AB - ParkingBrake (p_Brake)
   B  - Right
   A  - Left
-  +60 deg  - Forwards
-  -60 deg  - Backwards
+  +45 deg  - Forwards
+  -45 deg  - Backwards
 
 Radio Signals:
-  -1  - Backwards
+  1  - Backwards
   0   - Straight
-  1   - Forwards
+  -1   - Forwards
   2   - Left
   3   - Right
   10  - Parking Brake ON
@@ -60,12 +60,12 @@ def on_forever():
             button_b_pressed = False
 
     # Forwards
-    if input.rotation(Rotation.PITCH) > 65:
-        radio.send_number(-1)
+    if input.rotation(Rotation.PITCH) > 45:
+        radio.send_number(1)
     
     # Backwards
-    if input.rotation(Rotation.PITCH) < -60:
-        radio.send_number(1)
+    if input.rotation(Rotation.PITCH) < -45:
+        radio.send_number(-1)
     
     basic.pause(150)
 
