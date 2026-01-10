@@ -1,3 +1,5 @@
+# Made by Daniel Peterka 3A6 // 2022
+
 """
 CAT AND MOUSE GAME
 Cat can be moved in 4 directions by tilting the board
@@ -12,7 +14,7 @@ Button B: restart game (after finishing the game)
 Difficulty, TimeLimit, MovesLimit, MotionDeg, RequireReset, MaxResetDeg can be adjusted
 """
 
-Difficulty   = 2     #  Eazy(1) │ Medium(2) │ Hard(3)│ Impossible(4)
+Difficulty   = 2     #  Eazy(1) │ Medium(2) │ Impossible(3)
 TimeLimit    = 0     #  Time limit (s)  │ 0 = No limit
 MovesLimit   = 0     #  Cat moves limit │ 0 = No limit
 MotionDeg    = 35    #  Degrees to register movement
@@ -27,7 +29,6 @@ KeyBindsAllowed = False
 TimePlayed = 0
 MouseMoves = 0
 CatMoves = 0
-
 
 # Mouse Updater:
 def SetRandomMousePosition():
@@ -67,57 +68,68 @@ def IsCornerBlock(PositionX, PositionY):
 
 def MoveMouse():
     global MousePosition, MouseUpdatePosition, CatPosition, Difficulty
-    PossibleYvalue = [-1,1]
-    FurthestBlock = [0,0]
-    BlockDistance = 0
-    CornerBlock = False
-    for i in range(Math.pow(Difficulty, 3)*2):
-        basic.pause(5)
-        NewMousePosition = [0,0]
-        if MousePosition[0] < 4 and MousePosition[0] > 0:
-            NewMousePosition[0] = MousePosition[0] + randint(-1, 1)
-        elif MousePosition[0] ==4:
-            NewMousePosition[0] = randint(3,4)
-        elif MousePosition[0] == 0:
-            NewMousePosition[0] = randint(1,0)
-        if NewMousePosition[0] == MousePosition[0]:
-            if MousePosition[1] < 4 and MousePosition[1] > 0:
-                NewMousePosition[1] = MousePosition[1] + PossibleYvalue[randint(0, 1)]
-            elif MousePosition[1] ==4:
-                NewMousePosition[1] = 3
-            elif MousePosition[1] ==0:
-                NewMousePosition[1] = 1
-        else:
-            if MousePosition[1] < 4 and MousePosition[1] > 0:
-                NewMousePosition[1] = MousePosition[1] + randint(-1, 1)
-            elif MousePosition[1] ==4:
-                NewMousePosition[1] = randint(3,4)
-            elif MousePosition[1] == 0:
-                NewMousePosition[1] = randint(1,0)
 
-        if (abs(NewMousePosition[0] - CatPosition[0]) + abs(NewMousePosition[1] - CatPosition[1])) > BlockDistance:
-            if Difficulty >= 3 and IsCornerBlock(NewMousePosition[0], NewMousePosition[1]) == True:
-                if abs(NewMousePosition[0] - CatPosition[0]) + abs(NewMousePosition[1] - CatPosition[1]) >= 6:
-                    FurthestBlock[0] = NewMousePosition[0]
-                    FurthestBlock[1] = NewMousePosition[1]
-                    BlockDistance = abs(NewMousePosition[0] - CatPosition[0]) + abs(NewMousePosition[1] - CatPosition[1])
-                    CornerBlock = True
-            else:
-                FurthestBlock[0] = NewMousePosition[0]
-                FurthestBlock[1] = NewMousePosition[1]
-                BlockDistance = abs(NewMousePosition[0] - CatPosition[0]) + abs(NewMousePosition[1] - CatPosition[1])
-                CornerBlock = IsCornerBlock(NewMousePosition[0], NewMousePosition[1])
+    possible_moves = []
 
-        elif abs(NewMousePosition[0] - CatPosition[0]) + abs(NewMousePosition[1] - CatPosition[1]) == BlockDistance and CornerBlock :
-            if IsCornerBlock(NewMousePosition[0], NewMousePosition[1]) == False:
-                FurthestBlock[0] = NewMousePosition[0]
-                FurthestBlock[1] = NewMousePosition[1]
-                CornerBlock = False
+    for dx in range(-1, 2):
+        for dy in range(-1, 2):
+            if dx == 0 and dy == 0:
+                continue
+            
+            nx = MousePosition[0] + dx
+            ny = MousePosition[1] + dy
 
-    if NewMousePosition[0] == CatPosition[0] and NewMousePosition[1] == CatPosition[1]:
-        MoveMouse()
+            if 0 <= nx <= 4 and 0 <= ny <= 4:
+                if not (nx == CatPosition[0] and ny == CatPosition[1]):
+                    possible_moves.append([nx, ny])
+    
+    if len(possible_moves) == 0:
+        return
+
+    target_move = []
+    
+    play_smart = False
+    
+    if Difficulty == 3:
+        play_smart = True
+    elif Difficulty == 2:
+        if randint(0, 1) == 1: # 50% šance
+            play_smart = True
+            
+    if play_smart:
+        candidates = possible_moves
+
+        if Difficulty == 3:
+            no_corner_moves = []
+            for m in candidates:
+                is_corner = (m[0] == 0 or m[0] == 4) and (m[1] == 0 or m[1] == 4)
+                
+                if not is_corner:
+                    no_corner_moves.append(m)
+
+            if len(no_corner_moves) > 0:
+                candidates = no_corner_moves
+
+        max_dist = -1
+        best_candidates = []
+        
+        for move in candidates:
+            dist = abs(move[0] - CatPosition[0]) + abs(move[1] - CatPosition[1])
+            
+            if dist > max_dist:
+                max_dist = dist
+                best_candidates = [move]
+            elif dist == max_dist:
+                best_candidates.append(move)
+
+        idx = randint(0, len(best_candidates) - 1)
+        target_move = best_candidates[idx]
+        
     else:
-        MouseUpdatePosition(FurthestBlock[0],FurthestBlock[1])
+        idx = randint(0, len(possible_moves) - 1)
+        target_move = possible_moves[idx]
+
+    MouseUpdatePosition(target_move[0], target_move[1])
 
 
 # Cat Updater:
@@ -228,7 +240,7 @@ def BaseRotation():
                 neutral = False
                 CatUpdatePosition(CatPosition[0], CatPosition[1]-1)
         elif ROLL < (-MotionDeg) and CatPosition[0] > 0:
-            if reset:   
+            if reset:
                 neutral = False
                 CatUpdatePosition(CatPosition[0]-1, CatPosition[1])
         elif ROLL > MotionDeg and CatPosition[0] < 4 and reset:
@@ -244,5 +256,3 @@ basic.forever(BaseRotation)
 StartTimer()
 input.on_button_pressed(Button.A, ShowScore)
 input.on_button_pressed(Button.B, RestartGame)
-
-# Made by Daniel Peterka 3A6 // 2022
