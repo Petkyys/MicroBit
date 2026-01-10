@@ -6,9 +6,9 @@ radio.set_group(1)
 
 '''
 Radio Signals:
-  1  - Backwards
+  -1  - Backwards
   0   - Straight
-  -1   - Forwards
+  1   - Forwards
   2   - Left
   3   - Right
   10  - Parking brake on
@@ -32,7 +32,7 @@ def control_vehicle():
     global direction, steering
 
     # Movement control
-    if direction == -1:            # Forwards
+    if direction == 1:            # Forwards
         if steering == 2:         # Turn left
             RingbitCar.freestyle(100, 40)
         elif steering == 3:       # Turn right
@@ -40,7 +40,7 @@ def control_vehicle():
         else:
             RingbitCar.freestyle(100, 100)  # Forwards
 
-    elif direction == 1:         # Backwards
+    elif direction == -1:         # Backwards
         if steering == 2:         # Turn left
             RingbitCar.freestyle(-100, -40)
         elif steering == 3:       # Turn right
